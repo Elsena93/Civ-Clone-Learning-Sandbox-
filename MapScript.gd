@@ -9,7 +9,9 @@ onready var a_path = []
 
 onready var CURRENT_CHAR
 onready var SELECTOR
-#onready var DEST_OCCUPIED
+onready var OCCUPIED_TILES = {}
+
+onready var disconnected_points = []
 
 func _ready():
 	#Create AStar point on each tile
@@ -37,6 +39,12 @@ func _ready():
 							var neighbour = generate_index(x + i, y + j)
 							if (as.are_points_connected(apoint, neighbour) == false):
 								as.connect_points(apoint, neighbour, true)
+	
+	#Initiate OCCUPIED_TILES to keep track WorldObject occupied tiles
+	for x in range(0, MAP_WIDTH):
+		OCCUPIED_TILES[x] = {}
+		for y in range(0, MAP_HEIGHT):
+			OCCUPIED_TILES[x][y] = null
 
 func tile_to_astar_coor(tilecoor):
 	var indx = generate_index(tilecoor.x, tilecoor.y)
@@ -54,8 +62,40 @@ func check_cost(i, j):
 	
 func generate_index(i, j):
 	var idx = 0.5 * (i + j) * (i + j + 1 ) + j
-	#aindex.append(idx)
 	return idx
+
+#Check obstacle in path and freed the point from its neighbours
+func check_obstacle_in_path(path):
+	var currently_checked = path
+	for point in currently_checked:
+		#print("DEBUG: Currently checked point: %s" %  [point])
+		var point_to_tile = self.world_to_map(Vector2(point.x, point.y))
+		var occupier = OCCUPIED_TILES[int(point_to_tile.x)][int(point_to_tile.y)]
+		if occupier != null:
+			disconnect_neighbouring_points(point_to_tile.x, point_to_tile.y)
+			print("DEGUB: Popped tile: %s ; Popped point: %s" %  [point_to_tile, point])
+
+func disconnect_neighbouring_points(x, y):
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			var neighbour = Vector2(x+i, y+j)
+			var neighbour_id = generate_index(x+i, y+j)
+			var home = Vector2(x, y)
+			var home_id = generate_index(x, y)
+			var connection_before = as.are_points_connected(neighbour_id, home_id)
+			print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_before])
+			as.disconnect_points(neighbour_id, home_id)
+			var connection_after = as.are_points_connected(neighbour_id, home_id)
+			print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_after])
+	disconnected_points.append(Vector2(x,y))
+			
+
+func reconnect_neighbouring_points():
+	for point in disconnected_points:
+		for i in range(-1, 2):
+			for j in range(-1, 2):
+				as.connect_points(generate_index(point.x, point.y), generate_index(point.x + i, point.y + j), true)
+		disconnected_points.erase(point)
 
 func _physics_process(delta):
 	CURRENT_CHAR = self.get_node("../Selector").SELECTED
@@ -69,14 +109,32 @@ func _physics_process(delta):
 		var a_ini = generate_index(initile.x, initile.y)
 		a_path = as.get_point_path(a_ini, a_fin)
 		a_path.remove(0)
-		if (SELECTOR.DEST_OCCUPIED == true and a_path.size() > 0):
-			a_path.remove(a_path.size() - 1)
-			SELECTOR.DEST_OCCUPIED = false
+		print("DEBUG: current path: %s" % [a_path])
+		check_obstacle_in_path(a_path)
+		print("DEBUG: currently diconnected: %s" % [disconnected_points])
+		a_path = as.get_point_path(a_ini, a_fin)
+		a_path.remove(0)
+		print("DEBUG: current path: %s" % [a_path])
+		reconnect_neighbouring_points()
+		print("DEBUG: currently diconnected: %s" % [disconnected_points])
+		#a_path = as.get_point_path(a_ini, a_fin)
+		#a_path.remove(0)
+		#reconnect_neighbouring_points()
+		#if (SELECTOR.DEST_OCCUPIED == true and a_path.size() > 0):
+			#a_path.remove(a_path.size() - 1)
+			#SELECTOR.DEST_OCCUPIED = false
 		SELECTOR.REQUESTING_PATH = false
 		if (a_path.size() > 0):
 			CURRENT_CHAR.storing_path = true
 		else:
 			SELECTOR.set_process_unhandled_input(true)
+
+func _on_Button_pressed():
+	for x in range(0, MAP_WIDTH):
+		for y in range(0, MAP_HEIGHT):
+			if (OCCUPIED_TILES[x][y] != null):
+				print("DEBUG: (%d, %d) occupied by %s"% [x, y ,OCCUPIED_TILES[x][y]])
+	print("DEBUG: Debug message done")
 
 #func _physics_process(delta):
 	#currentpos = AVATAR.position
@@ -93,4 +151,3 @@ func _physics_process(delta):
 	#else:
 		#pass
 		
-	

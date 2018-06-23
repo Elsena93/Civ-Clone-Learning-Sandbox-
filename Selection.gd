@@ -6,7 +6,7 @@ onready var tilenode
 onready var HALF_CELL_SIZE
 
 onready var SELECTED
-onready var DEST_OCCUPIED = false
+#onready var DEST_OCCUPIED = false
 onready var REQUESTING_PATH = false
 
 
@@ -26,9 +26,9 @@ func _unhandled_input(event):
 			if overlap.size() > 0:
 				SELECTED = overlap[0]
 		elif (SELECTED != null) :
-			var overlap = self.get_overlapping_bodies()
-			if overlap.size() > 0:
-				DEST_OCCUPIED = true
+			#var overlap = self.get_overlapping_bodies()
+			#if overlap.size() > 0:
+				#DEST_OCCUPIED = true
 			set_process_unhandled_input(false)
 			REQUESTING_PATH = true
 		else:

@@ -13,16 +13,51 @@
 [node name="Selector" parent="." index="1" instance=ExtResource( 2 )]
 
 script = ExtResource( 3 )
+_sections_unfolded = [ "Transform", "Z Index" ]
 
 [node name="WorldObjects" type="Node" parent="." index="2"]
 
 [node name="Character" parent="WorldObjects" index="0" instance=ExtResource( 4 )]
 
+position = Vector2( 160, 224 )
+collision_mask = 2
+collision/safe_margin = 0.001
 script = ExtResource( 5 )
+_sections_unfolded = [ "Collision", "collision" ]
 
 [node name="Character2" parent="WorldObjects" index="1" instance=ExtResource( 4 )]
 
-position = Vector2( 224, 32 )
+position = Vector2( 352, 224 )
+collision_mask = 2
+collision/safe_margin = 0.001
 script = ExtResource( 5 )
+_sections_unfolded = [ "Collision", "collision" ]
+
+[node name="Button" type="Button" parent="." index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 96.0
+margin_right = 191.0
+margin_bottom = 20.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+focus_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+action_mode = 0
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Check Debug"
+flat = false
+align = 1
+
+[connection signal="pressed" from="Button" to="TileMap" method="_on_Button_pressed"]
 
 
