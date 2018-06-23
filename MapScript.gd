@@ -73,7 +73,7 @@ func check_obstacle_in_path(path):
 		var occupier = OCCUPIED_TILES[int(point_to_tile.x)][int(point_to_tile.y)]
 		if occupier != null:
 			disconnect_neighbouring_points(point_to_tile.x, point_to_tile.y)
-			print("DEGUB: Popped tile: %s ; Popped point: %s" %  [point_to_tile, point])
+			#print("DEGUB: Popped tile: %s ; Popped point: %s" %  [point_to_tile, point])
 
 func disconnect_neighbouring_points(x, y):
 	for i in range(-1, 2):
@@ -83,10 +83,10 @@ func disconnect_neighbouring_points(x, y):
 			var home = Vector2(x, y)
 			var home_id = generate_index(x, y)
 			var connection_before = as.are_points_connected(neighbour_id, home_id)
-			print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_before])
+			#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_before])
 			as.disconnect_points(neighbour_id, home_id)
 			var connection_after = as.are_points_connected(neighbour_id, home_id)
-			print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_after])
+			#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_after])
 	disconnected_points.append(Vector2(x,y))
 			
 
@@ -96,6 +96,12 @@ func reconnect_neighbouring_points():
 			for j in range(-1, 2):
 				as.connect_points(generate_index(point.x, point.y), generate_index(point.x + i, point.y + j), true)
 		disconnected_points.erase(point)
+
+func is_destination_occupied(Vector3_path):
+	var destination = Vector3_path[Vector3_path.size() - 1]
+	var tile_des = world_to_map(Vector2(destination.x, destination.y))
+	if (OCCUPIED_TILES[int(tile_des.x)][int(tile_des.y)] != null):
+		return true
 
 func _physics_process(delta):
 	CURRENT_CHAR = self.get_node("../Selector").SELECTED
@@ -109,14 +115,18 @@ func _physics_process(delta):
 		var a_ini = generate_index(initile.x, initile.y)
 		a_path = as.get_point_path(a_ini, a_fin)
 		a_path.remove(0)
-		print("DEBUG: current path: %s" % [a_path])
+		if (a_path.size() > 0 and is_destination_occupied(a_path) == true):
+			a_path.remove(a_path.size() - 1)
+		#print("DEBUG: current path: %s" % [a_path])
 		check_obstacle_in_path(a_path)
-		print("DEBUG: currently diconnected: %s" % [disconnected_points])
+		#print("DEBUG: currently diconnected: %s" % [disconnected_points])
 		a_path = as.get_point_path(a_ini, a_fin)
 		a_path.remove(0)
-		print("DEBUG: current path: %s" % [a_path])
+		if (a_path.size() > 0 and is_destination_occupied(a_path) == true):
+			a_path.remove(a_path.size() - 1)
+		#print("DEBUG: current path: %s" % [a_path])
 		reconnect_neighbouring_points()
-		print("DEBUG: currently diconnected: %s" % [disconnected_points])
+		#print("DEBUG: currently diconnected: %s" % [disconnected_points])
 		#a_path = as.get_point_path(a_ini, a_fin)
 		#a_path.remove(0)
 		#reconnect_neighbouring_points()
