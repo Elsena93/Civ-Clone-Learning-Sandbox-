@@ -108,7 +108,6 @@ func is_destination_occupied(Vector3_path):
 func _physics_process(delta):
 	CURRENT_CHAR = self.get_node("../Selector").SELECTED
 	SELECTOR = self.get_node("../Selector")
-	#DEST_OCCUPIED = self.get_node("../Selector").DEST_OCCUPIED
 	if SELECTOR.REQUESTING_PATH == true and CURRENT_CHAR != null:
 		a_path.resize(0)
 		var fintile = world_to_map(get_global_mouse_position())
@@ -129,37 +128,8 @@ func _physics_process(delta):
 		#print("DEBUG: current path: %s" % [a_path])
 		reconnect_neighbouring_points()
 		#print("DEBUG: currently diconnected: %s" % [disconnected_points])
-		#a_path = as.get_point_path(a_ini, a_fin)
-		#a_path.remove(0)
-		#reconnect_neighbouring_points()
-		#if (SELECTOR.DEST_OCCUPIED == true and a_path.size() > 0):
-			#a_path.remove(a_path.size() - 1)
-			#SELECTOR.DEST_OCCUPIED = false
 		SELECTOR.REQUESTING_PATH = false
 		if (a_path.size() > 0):
 			CURRENT_CHAR.storing_path = true
 		else:
 			SELECTOR.set_process_unhandled_input(true)
-
-func _on_Button_pressed():
-	for x in range(0, MAP_WIDTH):
-		for y in range(0, MAP_HEIGHT):
-			if (OCCUPIED_TILES[x][y] != null):
-				print("DEBUG: (%d, %d) occupied by %s"% [x, y ,OCCUPIED_TILES[x][y]])
-	print("DEBUG: Debug message done")
-
-#func _physics_process(delta):
-	#currentpos = AVATAR.position
-	#if movement == true:
-		#var destination = Vector2(a_path[0].x, a_path[0].y)
-		#var direction = (destination - currentpos).normalized()
-		#AVATAR.move_and_collide(direction * MAX_SPEED * delta)
-		#if (abs(currentpos.x - a_path[0].x) < HALF_CELL_SIZE/8 and abs(currentpos.y - a_path[0].y) < HALF_CELL_SIZE/8):
-			#AVATAR.set_position(destination)
-			#if (a_path.size() > 1):
-				#a_path.remove(0)
-			#else:
-				#movement = false
-	#else:
-		#pass
-		

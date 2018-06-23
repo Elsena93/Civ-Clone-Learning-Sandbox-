@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-onready var MAX_SPEED = 400
+onready var MAX_SPEED = 800
 onready var movement = false
 onready var currentpos
 onready var TILENODE

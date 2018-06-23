@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://TestTile.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Selection.tscn" type="PackedScene" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://CameraTarget.gd" type="Script" id=4]
 [ext_resource path="res://Character.tscn" type="PackedScene" id=5]
 [ext_resource path="res://CharacterScript.gd" type="Script" id=6]
+[ext_resource path="res://UI.tscn" type="PackedScene" id=7]
+[ext_resource path="res://User_Interface.gd" type="Script" id=8]
 
 [node name="World" type="Node" index="0"]
 
@@ -20,7 +22,6 @@ _sections_unfolded = [ "Transform", "Z Index" ]
 
 [node name="MouseNode" type="Node2D" parent="." index="2"]
 
-position = Vector2( 512, 544 )
 script = ExtResource( 4 )
 
 [node name="Camera2D" type="Camera2D" parent="MouseNode" index="0"]
@@ -29,11 +30,11 @@ anchor_mode = 1
 rotating = false
 current = true
 zoom = Vector2( 1, 1 )
-limit_left = -10000000
-limit_top = -10000000
-limit_right = 10000000
-limit_bottom = 10000000
-limit_smoothed = true
+limit_left = 0
+limit_top = 0
+limit_right = 102400
+limit_bottom = 60000
+limit_smoothed = false
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = false
@@ -47,7 +48,7 @@ drag_margin_bottom = 0.85
 editor_draw_screen = true
 editor_draw_limits = false
 editor_draw_drag_margin = false
-_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset", "Smoothing" ]
+_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset" ]
 __meta__ = {
 "_edit_lock_": true
 }
@@ -70,31 +71,8 @@ collision/safe_margin = 0.001
 script = ExtResource( 6 )
 _sections_unfolded = [ "Collision", "collision" ]
 
-[node name="Button" type="Button" parent="." index="4"]
+[node name="MarginContainer" parent="." index="4" instance=ExtResource( 7 )]
 
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 96.0
-margin_right = 191.0
-margin_bottom = 20.0
-rect_pivot_offset = Vector2( 0, 0 )
-rect_clip_content = false
-focus_mode = 2
-mouse_filter = 0
-mouse_default_cursor_shape = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-action_mode = 0
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = "Check Debug"
-flat = false
-align = 1
-
-[connection signal="pressed" from="Button" to="TileMap" method="_on_Button_pressed"]
+script = ExtResource( 8 )
 
 
