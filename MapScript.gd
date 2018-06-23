@@ -78,15 +78,16 @@ func check_obstacle_in_path(path):
 func disconnect_neighbouring_points(x, y):
 	for i in range(-1, 2):
 		for j in range(-1, 2):
-			var neighbour = Vector2(x+i, y+j)
-			var neighbour_id = generate_index(x+i, y+j)
-			var home = Vector2(x, y)
-			var home_id = generate_index(x, y)
-			var connection_before = as.are_points_connected(neighbour_id, home_id)
-			#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_before])
-			as.disconnect_points(neighbour_id, home_id)
-			var connection_after = as.are_points_connected(neighbour_id, home_id)
-			#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_after])
+			if (i != 0 or j != 0):
+				var neighbour = Vector2(x+i, y+j)
+				var neighbour_id = generate_index(x+i, y+j)
+				var home = Vector2(x, y)
+				var home_id = generate_index(x, y)
+				var connection_before = as.are_points_connected(neighbour_id, home_id)
+				#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_before])
+				as.disconnect_points(neighbour_id, home_id)
+				var connection_after = as.are_points_connected(neighbour_id, home_id)
+				#print("DEBUG: %s to %s connection currently %s" % [neighbour, home, connection_after])
 	disconnected_points.append(Vector2(x,y))
 			
 
@@ -94,7 +95,8 @@ func reconnect_neighbouring_points():
 	for point in disconnected_points:
 		for i in range(-1, 2):
 			for j in range(-1, 2):
-				as.connect_points(generate_index(point.x, point.y), generate_index(point.x + i, point.y + j), true)
+				if (i != 0 or j != 0):
+					as.connect_points(generate_index(point.x, point.y), generate_index(point.x + i, point.y + j), true)
 		disconnected_points.erase(point)
 
 func is_destination_occupied(Vector3_path):
